@@ -67,7 +67,7 @@ int lexer::get_char(){
         return ' ';
     }
 
-    return c;
+    return tolower(c);
 }
 
 void lexer::unget_char(char c){
