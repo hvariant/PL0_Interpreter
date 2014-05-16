@@ -45,6 +45,8 @@ static void init_token_map(){
     token_map[PL0_WHILE] = "PL0_WHILE";
     token_map[PL0_DO] = "PL0_DO";
 
+    token_map[PL0_NONTERM] = "PL0_NONTERM";
+
     token_map[PL0_EOF] = "PL0_EOF";
 }
 

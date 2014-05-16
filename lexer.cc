@@ -112,6 +112,10 @@ void lexer::match(char c){
     }
 }
 
+void lexer::unget_token(PL0_token token){ //@TODO: implement
+
+}
+
 PL0_token lexer::get_token(){
 begin:
     char c = get_char();

@@ -39,6 +39,8 @@ typedef enum{
 
     PL0_EOF,
 
+    PL0_NONTERM,
+
     PL0_TOKEN_NUM,
 } PL0_token;
 
