@@ -22,12 +22,7 @@ typedef enum{
     PL0_TIMES,
     PL0_DIV,
 
-    PL0_EQ,
-    PL0_NEQ, //'#'
-    PL0_LT,
-    PL0_GT,
-    PL0_LE,
-    PL0_GE,
+    PL0_COMPARE,
     PL0_ODD,
 
     PL0_BEGIN,
@@ -42,6 +37,7 @@ typedef enum{
     PL0_NONTERM,
 
     PL0_TOKEN_NUM,
+    PL0_EQ, //special virtual token
 } PL0_token;
 
 const char* get_token_map(PL0_token t);

@@ -30,12 +30,7 @@ static void init_token_map(){
     token_map[PL0_TIMES] = "PL0_TIMES";
     token_map[PL0_DIV] = "PL0_DIV";
 
-    token_map[PL0_EQ] = "PL0_EQ";
-    token_map[PL0_NEQ] = "PL0_NEQ"; //'#'
-    token_map[PL0_LT] = "PL0_LT";
-    token_map[PL0_GT] = "PL0_GT";
-    token_map[PL0_LE] = "PL0_LE";
-    token_map[PL0_GE] = "PL0_GE";
+    token_map[PL0_COMPARE] = "PL0_COMPARE";
     token_map[PL0_ODD] = "PL0_ODD";
 
     token_map[PL0_BEGIN] = "PL0_BEGIN";
@@ -48,6 +43,7 @@ static void init_token_map(){
     token_map[PL0_NONTERM] = "PL0_NONTERM";
 
     token_map[PL0_EOF] = "PL0_EOF";
+    token_map[PL0_EQ] = "PL0_EQ";
 }
 
 const char* get_token_map(PL0_token t){

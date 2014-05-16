@@ -11,11 +11,12 @@ int main(int argc,char* argv[]){
 
     lexer lex(argv[1]);
 
-    PL0_token token = lex.get_token();
+    string s;
+    PL0_token token = lex.get_token(s);
     while(token != PL0_EOF){
-        printf("%s[%s]\n",lex.get_sym(),get_token_map(token));
+        printf("%s[%s]\n",s.c_str(),get_token_map(token));
 
-        token = lex.get_token();
+        token = lex.get_token(s);
     }
 
     return 0;

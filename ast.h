@@ -9,6 +9,20 @@ typedef enum{
     AST_TERMINAL = 1,
     AST_CONST,
     AST_VAR,
+    AST_PROCEDURE,
+    AST_ODD,
+    AST_POSITIVE,
+    AST_NEGATIVE,
+
+    AST_PLUS,
+    AST_MINUS,
+    AST_TIMES,
+    AST_DIV,
+
+    AST_ASSIGN,
+    AST_CALL,
+    AST_IF,
+    AST_WHILE,
 
     AST_PROGRAM,
     AST_BLOCK,
@@ -16,7 +30,6 @@ typedef enum{
     AST_CONDITION,
     AST_EXPRESSION,
     AST_TERM,
-    AST_FACTOR,
 } ast_type;
 
 class ast{

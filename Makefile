@@ -19,5 +19,5 @@ parser_test: ${LEXER_SRC} ${COMMON_SRC} ${PARSER_SRC} ${HEADER} ${PARSER_DEMO}
 	${CPP} ${LEXER_SRC} ${COMMON_SRC} ${PARSER_SRC} ${PARSER_DEMO} -o $@ ${CFLAGS}
 
 clean:
-	rm -rf lexer_test
-	rm -rf parser_test
+	rm -rf lexer_test{,.dSYM}
+	rm -rf parser_test{,.dSYM}

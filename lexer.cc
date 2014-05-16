@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <ctype.h>
 
+typedef std::pair<PL0_token,std::string> S_type;
+
 lexer::lexer(char* fn){
     init(fn);
 }
@@ -15,12 +17,9 @@ lexer::lexer(FILE* fp){
 
 lexer::lexer(){
     input = NULL;
-    buffer = NULL;
-    bsize = 0;
 }
 
 lexer::~lexer(){
-    if(buffer) free(buffer);
     if(input) fclose(input);
 }
 
@@ -39,24 +38,8 @@ void lexer::init(FILE* fp){
 
     input = fp;
 
-    buffer = NULL;
-    set_bufsize(LEXER_BSIZE);
-
     lineno = 1;
     linepos = 1;
-}
-
-void lexer::set_bufsize(size_t n){
-    if(buffer){
-        buffer = (char*)realloc(buffer,n);
-    } else {
-        buffer = (char*)malloc((n+10)*sizeof(char));
-    }
-
-    if(!buffer){
-        fprintf(stderr,"[lexer] error when allocating buffer\n");
-        exit(1);
-    }
 }
 
 int lexer::get_char(){
@@ -112,11 +95,21 @@ void lexer::match(char c){
     }
 }
 
-void lexer::unget_token(PL0_token token){ //@TODO: implement
-
+void lexer::unget_token(PL0_token token, const string& buf){
+    S.push(S_type(token, buf));
 }
 
-PL0_token lexer::get_token(){
+PL0_token lexer::get_token(string& s){
+    s.clear();
+
+    if(S.size() > 0){
+        S_type s_top = S.top();
+        S.pop();
+
+        s = s_top.second;
+        return s_top.first;
+    }
+
 begin:
     char c = get_char();
 
@@ -127,41 +120,42 @@ begin:
     PL0_token ret;
 
     switch(c){
-        case '=':
-        {
-            strcpy(buffer,"=");
-            ret = PL0_EQ;
-            break;
-        }
         case ':':
         {
             match('=');
-            strcpy(buffer,":=");
+
+            s = ":=";
             ret = PL0_ASSIGN;
             break;
         }
         case '.':
         {
-            strcpy(buffer,".");
+            s = ".";
             ret = PL0_PERIOD;
             break;
         }
         case ',':
         {
-            strcpy(buffer,",");
+            s = ",";
             ret = PL0_COMMA;
             break;
         }
         case ';':
         {
-            strcpy(buffer,";");
+            s = ";";
             ret = PL0_SEMICOLON;
+            break;
+        }
+        case '=':
+        {
+            s = "=";
+            ret = PL0_EQ;
             break;
         }
         case '#':
         {
-            strcpy(buffer,"#");
-            ret = PL0_NEQ;
+            s = "#";
+            ret = PL0_COMPARE;
             break;
         }
         case '<':
@@ -169,11 +163,11 @@ begin:
             if(peek() == '='){
                 match('=');
 
-                strcpy(buffer,"<=");
-                ret = PL0_LE;
+                s = "<=";
+                ret = PL0_COMPARE;
             } else {
-                strcpy(buffer,"<");
-                ret = PL0_LT;
+                s = "<";
+                ret = PL0_COMPARE;
             }
             break;
         }
@@ -182,47 +176,47 @@ begin:
             if(peek() == '='){
                 match('=');
 
-                strcpy(buffer,">=");
-                ret = PL0_GE;
+                s = ">=";
+                ret = PL0_COMPARE;
             } else {
-                strcpy(buffer,">");
-                ret = PL0_GT;
+                s = ">";
+                ret = PL0_COMPARE;
             }
             break;
         }
         case '+':
         {
-            strcpy(buffer,"+");
+            s = "+";
             ret = PL0_PLUS;
             break;
         }
         case '-':
         {
-            strcpy(buffer,"-");
+            s = "-";
             ret = PL0_MINUS;
             break;
         }
         case '*':
         {
-            strcpy(buffer,"*");
+            s = "*";
             ret = PL0_TIMES;
             break;
         }
         case '/':
         {
-            strcpy(buffer,"/");
+            s = "/";
             ret = PL0_DIV;
             break;
         }
         case '(':
         {
-            strcpy(buffer,"(");
+            s = "(";
             ret = PL0_LPAREN;
             break;
         }
         case ')':
         {
-            strcpy(buffer,")");
+            s = ")";
             ret = PL0_RPAREN;
             break;
         }
@@ -230,51 +224,49 @@ begin:
         {
             if(isdigit(c)){
                 int i = 0;
-                buffer[i++] = c;
+                s.push_back(c);
                 while(isdigit(peek())){
                     c = get_char();
-                    buffer[i++] = c;
+                    s.push_back(c);
                 }
-                buffer[i] = 0;
 
                 ret = PL0_NUMBER;
             } else if(isalpha(c)){
                 int i = 0;
-                buffer[i++] = c;
+                s.push_back(c);
                 char nc = peek(); 
                 while(isalpha(nc) || nc == '_' || isdigit(nc)){
                     c = get_char();
-                    buffer[i++] = c;
+                    s.push_back(c);
 
                     nc = peek();
                 }
-                buffer[i] = 0;
 
-                if(!strcmp(buffer,"const")){
-                    return PL0_CONST;
-                } else if(!strcmp(buffer,"var")){
-                    return PL0_VAR;
-                } else if(!strcmp(buffer,"procedure")){
-                    return PL0_PROCEDURE;
-                } else if(!strcmp(buffer,"call")){
-                    return PL0_CALL;
-                } else if(!strcmp(buffer,"begin")){
-                    return PL0_BEGIN;
-                } else if(!strcmp(buffer,"end")){
-                    return PL0_END;
-                } else if(!strcmp(buffer,"if")){
-                    return PL0_IF;
-                } else if(!strcmp(buffer,"then")){
-                    return PL0_THEN;
-                } else if(!strcmp(buffer,"while")){
-                    return PL0_WHILE;
-                } else if(!strcmp(buffer,"do")){
-                    return PL0_DO;
-                } else if(!strcmp(buffer,"odd")){
-                    return PL0_ODD;
+                if(!strcmp(s.c_str(),"const")){
+                    ret = PL0_CONST;
+                } else if(!strcmp(s.c_str(),"var")){
+                    ret = PL0_VAR;
+                } else if(!strcmp(s.c_str(),"procedure")){
+                    ret = PL0_PROCEDURE;
+                } else if(!strcmp(s.c_str(),"call")){
+                    ret = PL0_CALL;
+                } else if(!strcmp(s.c_str(),"begin")){
+                    ret = PL0_BEGIN;
+                } else if(!strcmp(s.c_str(),"end")){
+                    ret = PL0_END;
+                } else if(!strcmp(s.c_str(),"if")){
+                    ret = PL0_IF;
+                } else if(!strcmp(s.c_str(),"then")){
+                    ret = PL0_THEN;
+                } else if(!strcmp(s.c_str(),"while")){
+                    ret = PL0_WHILE;
+                } else if(!strcmp(s.c_str(),"do")){
+                    ret = PL0_DO;
+                } else if(!strcmp(s.c_str(),"odd")){
+                    ret = PL0_ODD;
+                } else {
+                    ret = PL0_ID;
                 }
-
-                ret = PL0_ID;
             } else if(isspace(c)){
                 goto begin;
             } else {
@@ -288,8 +280,4 @@ begin:
     }
 
     return ret;
-}
-
-const char* lexer::get_sym(){
-    return buffer;
 }
