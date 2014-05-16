@@ -49,6 +49,9 @@ public:
 
     void print(FILE* fp);
 private:
+    static const char* get_ast_type_map(ast_type);
+    static void print_ast(FILE* fp,ast* t,int indent);
+
     std::vector<ast*> children;
     ast_type _type;
     PL0_token _token;
