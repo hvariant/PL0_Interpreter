@@ -467,28 +467,22 @@ void codegen::resolve_call_refs(){
             continue;
         }
 
-        if(pl->parent == NULL){ //#program#
-            proc_local* target = NULL;
+        //check for local procedures first
+        proc_local* target = NULL;
 
-            for(int j=0;j<pl->children.size();j++){
-                if(pl->children[j]->name == call_refs_list[i].ref_name){
-                    target = pl->children[j];
-                    break;
-                }
+        for(int j=0;j<pl->children.size();j++){
+            if(pl->children[j]->name == call_refs_list[i].ref_name){
+                target = pl->children[j];
+                break;
             }
+        }
 
-            if(target == NULL){
-                fprintf(stderr,"[codegen] undefined reference to procedure '%s' in %s\n",call_refs_list[i].ref_name.c_str(),call_refs_list[i].full_proc_name.c_str());
-
-                exit(1);
-            }
-
+        if(target != NULL){
             int target_ind = target->addr;
             output[index].l = 1;
             output[index].a = target_ind;
-        } else {
+        } else { //climb up the hierachy
             proc_local* cur = pl->parent;
-            proc_local* target = NULL;
             int level = 0;
 
             while(cur && !target){
