@@ -44,6 +44,9 @@ static void init_token_map(){
 
     token_map[PL0_EOF] = "PL0_EOF";
     token_map[PL0_EQ] = "PL0_EQ";
+
+    token_map[PL0_READ] = "PL0_READ";
+    token_map[PL0_WRITE] = "PL0_WRITE";
 }
 
 const char* get_token_map(PL0_token t){

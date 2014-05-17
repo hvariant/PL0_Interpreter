@@ -64,7 +64,7 @@ ast* parser::block(){
 
     if(token == PL0_VAR){
         ast* vsub = new ast(AST_VAR);
-        vsub->add_child(vsub);
+        ret->add_child(vsub);
 
         match_next("block",PL0_ID,s);
         vsub->add_child(new ast(AST_TERMINAL,PL0_ID,s.c_str()));
@@ -172,6 +172,24 @@ ast* parser::statement(){
             wsub->add_child(condition());
             match_next("statement",PL0_DO,s);
             wsub->add_child(statement());
+            break;
+        }
+        case PL0_READ:
+        {
+            ast* rsub = new ast(AST_READ);
+            ret->add_child(rsub);
+
+            match_next("statement",PL0_ID,s);
+            rsub->add_child(new ast(AST_TERMINAL,PL0_ID,s.c_str()));
+            break;
+        }
+        case PL0_WRITE:
+        {
+            ast* wsub = new ast(AST_WRITE);
+            ret->add_child(wsub);
+
+            match_next("statement",PL0_ID,s);
+            wsub->add_child(new ast(AST_TERMINAL,PL0_ID,s.c_str()));
             break;
         }
         default:

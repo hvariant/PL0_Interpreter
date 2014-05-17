@@ -16,6 +16,9 @@ typedef enum{
     PL0_RPAREN,
     PL0_SEMICOLON,
 
+    PL0_READ,
+    PL0_WRITE,
+
     PL0_ASSIGN,
     PL0_PLUS,
     PL0_MINUS,

@@ -19,6 +19,9 @@ typedef enum{
     AST_TIMES,
     AST_DIV,
 
+    AST_READ,
+    AST_WRITE,
+
     AST_ASSIGN,
     AST_CALL,
     AST_IF,
@@ -28,8 +31,6 @@ typedef enum{
     AST_BLOCK,
     AST_STATEMENT,
     AST_CONDITION,
-    AST_EXPRESSION,
-    AST_TERM,
 } ast_type;
 
 class ast{
@@ -44,15 +45,19 @@ public:
     const char* term_sym() const{ return sym; }
 
     int children_size() const{ return children.size(); }
-    ast* get_child(int i);
+    ast* get_child(int i) const;
     void add_child(ast* t){ children.push_back(t); }
 
-    void print(FILE* fp);
-private:
+    void print(FILE* fp) const;
+
+    void print_stdout() const{ print(stdout); }
+
     static const char* get_ast_type_map(ast_type);
-    static void print_ast(FILE* fp,ast* t,int indent);
+private:
+    static void print_ast(FILE* fp,const ast* t,int indent);
 
     std::vector<ast*> children;
+
     ast_type _type;
     PL0_token _token;
     char* sym;

@@ -1,4 +1,3 @@
-CONST M=7,N=85;
 VAR  X, Y, Z, Q, R;
 
 PROCEDURE  MULTIPLY;
@@ -32,9 +31,9 @@ PROCEDURE  GCD;
   END;
 
 BEGIN 
-  X := M;  Y := N;  CALL MULTIPLY;
-  X := 25;  Y := 3;  CALL DIVIDE;
-  X := 84;  Y := 36;  CALL GCD;
+  ?X;  ?Y;  CALL MULTIPLY; !Z;
+  ?X;  ?Y;  CALL DIVIDE; !Q; !R;
+  ?X;  ?Y;  CALL GCD; !Z;
 END.
 
 

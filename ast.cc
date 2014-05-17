@@ -26,7 +26,7 @@ void ast::init(ast_type typ,PL0_token tok,const char* s){
     }
 }
 
-ast* ast::get_child(int i){
+ast* ast::get_child(int i) const{
     assert(0 <= i && i < children.size());
     return children[i];
 }
@@ -55,12 +55,15 @@ const char* ast::get_ast_type_map(ast_type t){
         case AST_BLOCK: return "AST_BLOCK";
         case AST_STATEMENT: return "AST_STATEMENT";
         case AST_CONDITION: return "AST_CONDITION";
-        case AST_EXPRESSION: return "AST_EXPRESSION";
-        case AST_TERM: return "AST_TERM";
+
+        case AST_READ: return "AST_READ";
+        case AST_WRITE: return "AST_WRITE";
     }
+
+    return NULL;
 }
 
-void ast::print(FILE* fp){
+void ast::print(FILE* fp) const{
     print_ast(fp,this,0);
 }
 
@@ -70,7 +73,7 @@ static void spaces(FILE* fp,int n){
     }
 }
 
-void ast::print_ast(FILE* fp,ast* t,int indent){
+void ast::print_ast(FILE* fp,const ast* t,int indent){
     spaces(fp,indent);
 
     fprintf(fp,"[%s]:",get_ast_type_map(t->type()));

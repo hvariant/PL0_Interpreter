@@ -88,7 +88,7 @@ void lexer::match(char c){
         if(next != EOF){
             fprintf(stderr,"[lexer] unexpected character %c, expected %c, in line %d:%d\n",next,c,lineno,linepos);
         } else {
-            fprintf(stderr,"[lexer] unexpected end of file, expected %c, in line %d:%d\n",next,c,lineno,linepos);
+            fprintf(stderr,"[lexer] unexpected end of file, expected %c, in line %d:%d\n",c,lineno,linepos);
         }
 
         exit(1);
@@ -220,10 +220,21 @@ begin:
             ret = PL0_RPAREN;
             break;
         }
+        case '!':
+        {
+            s = "!";
+            ret = PL0_WRITE;
+            break;
+        }
+        case '?':
+        {
+            s = "?";
+            ret = PL0_READ;
+            break;
+        }
         default:
         {
             if(isdigit(c)){
-                int i = 0;
                 s.push_back(c);
                 while(isdigit(peek())){
                     c = get_char();
@@ -232,7 +243,6 @@ begin:
 
                 ret = PL0_NUMBER;
             } else if(isalpha(c)){
-                int i = 0;
                 s.push_back(c);
                 char nc = peek(); 
                 while(isalpha(nc) || nc == '_' || isdigit(nc)){
